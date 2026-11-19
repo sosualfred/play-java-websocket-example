@@ -1,0 +1,5 @@
+target/
+logs/
+.bsp/
+.idea/
+.DS_Store
