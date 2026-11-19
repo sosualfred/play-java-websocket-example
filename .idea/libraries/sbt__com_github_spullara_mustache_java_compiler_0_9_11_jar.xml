@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="sbt: com.github.spullara.mustache.java:compiler:0.9.11:jar" type="java-imported" external-system-id="SBT">
+    <properties groupId="com.github.spullara.mustache.java" artifactId="compiler" version="0.9.11" baseVersion="0.9.11" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/github/spullara/mustache/java/compiler/0.9.11/compiler-0.9.11.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/github/spullara/mustache/java/compiler/0.9.11/compiler-0.9.11-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
