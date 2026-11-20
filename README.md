@@ -80,6 +80,39 @@ Because the web client library in Play, `WS`, is asynchronous and non-blocking, 
 
 The client-side of Reactive Requests and Reactive Composition is no different than the non-Reactive model.  The browser makes an Ajax request to the server and then calls a JavaScript function when it receives a response.  In the Reactive Stocks application, when a stock chart is flipped over it makes the request for the stock's sentiments.  That is done using jQuery's `ajax` method in the index.coffee file.  When the request returns data the `success` handler updates the UI.
 
+## Code changes from the original source code example
+###Code changes made by Alfred Sosu <alfred.sosu@mail.concordia.ca>
+
+### README Updated by Dr. Morales.
+
+### 1. `app/controllers/StockSentiment.java` (modified)
+
+Replaced the Twitter + external sentiment API pipeline with the Mastodon public hashtag timeline and a local word-list scorer.
+
+- **Removed:** the Twitter search proxy and `sentiment.url` pipeline (`fetchTweets`, `fetchSentiments`, `responsesAsJson`, `averageSentiment`, `collectAverage`) and their unused imports.
+- **Added:** `POSITIVE` and `NEGATIVE` word sets with common finance terms (e.g. "bullish", "plunge", "downgrade").
+- **Constructor:** reads `tweet.url` (now the Mastodon endpoint) and the new `mastodon.token` setting.
+- **`get(symbol)`:** sends a single request to `tweet.url + symbol` with `limit=40`, adds an `Authorization: Bearer` header when a token is set, fails on non-200 responses, then scores and summarizes the posts.
+- **`score(String html)`:** strips HTML tags, counts positive minus negative words, and returns `+1`, `0`, or `-1`.
+- **`summarize(List<Integer>)`:** computes the share of positive, negative, and neutral posts and returns a label plus probabilities (same JSON format as before).
+- **Error message:** changed to "Could not fetch the posts".
+
+### 2. `conf/application.conf` (modified)
+
+- `default.stocks` changed from `["GOOG", "AAPL", "ORCL"]` to `["GOOG", "AAPL", "META"]`.
+- Removed `sentiment.url`.
+- `tweet.url` now points to `https://mastodon.social/api/v1/timelines/tag/`.
+- Added `mastodon.token` (empty by default), which can be set with the `MASTODON_TOKEN` environment variable.
+
+### 3. `test/controllers/StockSentimentTest.java` (new)
+
+- Added `scoresAndLabels()`, a JUnit test using AssertJ.
+- Checks that `score()` returns `+1`, `-1`, and `0` for sample HTML posts.
+- Checks that `summarize()` returns the `pos`, `neg`, and `neutral` labels, including for an empty list.
+
+**Error handling:** non-200 responses from Mastodon are logged and returned as 502 with the upstream status; other failures are logged with their stack trace and return 500.
+
+
 ## Further Learning
 
 For more information, please see the documentation for Websockets and Pekko Streams:
